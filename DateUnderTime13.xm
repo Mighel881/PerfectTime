@@ -26,12 +26,12 @@ static BOOL hideLocationIndicator;
 
 - (void)applyStyleAttributes: (id)arg1
 {
-	if(!(self.text != nil && [self.text containsString: @":"])) %orig;
+	if(!([self.text containsString: @"\n"])) %orig;
 }
 
 -(void)setText: (NSString*)text
 {
-	if([text containsString: @":"])
+	if([text containsString: @":"] || [text containsString: @"."])
 	{
 		@autoreleasepool
 		{
@@ -45,7 +45,7 @@ static BOOL hideLocationIndicator;
 			self.attributedText = finalString;
 		}
 	}
-	else %orig(text);
+	else %orig;
 }
 
 %end
