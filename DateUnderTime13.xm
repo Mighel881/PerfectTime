@@ -24,7 +24,7 @@ static BOOL hideLocationIndicator;
 
 %hook _UIStatusBarStringView
 
-- (void)applyStyleAttributes: (id)arg1
+- (void)setFont: (UIFont*)arg1
 {
 	if(!([self.text containsString: @"\n"])) %orig;
 }
