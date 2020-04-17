@@ -8,6 +8,7 @@ DateUnderTime13Prefs_FILES = DUTAppearanceSettings.m DUTRootHeaderView.mm DUTRoo
 DateUnderTime13Prefs_INSTALL_PATH = /Library/PreferenceBundles
 DateUnderTime13Prefs_FRAMEWORKS = UIKit
 DateUnderTime13Prefs_PRIVATE_FRAMEWORKS = Preferences
+DateUnderTime13Prefs_LIBRARIES = sparkcolourpicker
 DateUnderTime13Prefs_CFLAGS = -fobjc-arc -Wno-deprecated-declarations
 DateUnderTime13Prefs_EXTRA_FRAMEWORKS = Cephei CepheiPrefs
 

@@ -10,6 +10,7 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = DateUnderTime13
 DateUnderTime13_FILES = DateUnderTime13.xm
 DateUnderTime13_CFLAGS = -fobjc-arc
+DateUnderTime13_LIBRARIES = sparkcolourpicker
 DateUnderTime13_EXTRA_FRAMEWORKS += Cephei
 
 include $(THEOS_MAKE_PATH)/tweak.mk
