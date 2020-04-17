@@ -26,6 +26,7 @@ static UIColor *customTextColor;
 static BOOL hideLocationIndicator;
 static BOOL disableBreadcrumbs;
 static BOOL showDateInSameLine;
+static double width;
 
 %hook _UIStatusBarStringView
 
@@ -57,6 +58,13 @@ static BOOL showDateInSameLine;
 			[self setTextAlignment: alignment];
 			[self setAdjustsFontSizeToFitWidth: NO];
 			[self setAttributedText: finalString];
+
+			if([self frame].size.width != width)
+			{
+				CGRect frame = [self frame];
+				frame.size.width = width;
+				[self setFrame: frame];
+			}
 		}
 	}
 	else %orig;
@@ -109,7 +117,8 @@ static BOOL showDateInSameLine;
 			@"customTextColorEnabled": @NO,
 			@"hideLocationIndicator": @NO,
 			@"disableBreadcrumbs": @NO,
-			@"showDateInSameLine": @NO
+			@"showDateInSameLine": @NO,
+			@"width": @100
     	}];
 
 		enabled = [pref boolForKey: @"enabled"];
@@ -127,6 +136,7 @@ static BOOL showDateInSameLine;
 			hideLocationIndicator = [pref boolForKey: @"hideLocationIndicator"];
 			disableBreadcrumbs = [pref boolForKey: @"disableBreadcrumbs"];
 			showDateInSameLine = [pref boolForKey: @"showDateInSameLine"];
+			width = [pref doubleForKey: @"width"];
 
 			if(customTextColorEnabled)
 			{
