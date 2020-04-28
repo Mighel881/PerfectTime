@@ -1,4 +1,4 @@
-THEOS_DEVICE_IP = ipad
+THEOS_DEVICE_IP = iphone
 ARCHS = arm64 arm64e
 TARGET = iphone:clang:13.2:13.2
 
@@ -10,7 +10,7 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = DateUnderTime13
 DateUnderTime13_FILES = DateUnderTime13.xm
 DateUnderTime13_CFLAGS = -fobjc-arc
-DateUnderTime13_LIBRARIES = sparkcolourpicker
+DateUnderTime13_LIBRARIES += sparkcolourpicker sparkapplist
 DateUnderTime13_EXTRA_FRAMEWORKS += Cephei
 
 include $(THEOS_MAKE_PATH)/tweak.mk

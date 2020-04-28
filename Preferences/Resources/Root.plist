@@ -207,6 +207,52 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
+			<string>ACTIONS</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.johnzaro.dateundertime13prefs</string>
+			<key>key</key>
+			<string>enableDoubleTap</string>
+			<key>label</key>
+			<string>Double Tap To Open App</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Select App To Open On Double Tap</string>
+			<key>action</key>
+			<string>selectDoubleTapApp</string>
+   	 	</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.johnzaro.dateundertime13prefs</string>
+			<key>key</key>
+			<string>enableHold</string>
+			<key>label</key>
+			<string>Hold To Open App</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Select App To Open On Hold</string>
+			<key>action</key>
+			<string>selectHoldApp</string>
+   	 	</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
 			<string>LOCATION INDICATOR</string>
 		</dict>
 		<dict>
