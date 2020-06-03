@@ -24,6 +24,7 @@ static NSString *locale;
 static long alignment;
 static BOOL customTextColorEnabled;
 static UIColor *customTextColor;
+static BOOL showAlarmOnTap;
 static BOOL enableDoubleTap;
 static NSString *doubleTapIdentifier;
 static BOOL enableHold;
@@ -31,7 +32,10 @@ static NSString *holdIdentifier;
 static BOOL hideLocationIndicator;
 static BOOL disableBreadcrumbs;
 static BOOL showDateInSameLine;
+static BOOL customWidth;
 static double width;
+
+static BOOL isShowingAlarm = NO;
 
 %hook _UIStatusBarStringView
 
@@ -40,8 +44,15 @@ static double width;
 	%orig;
 	[self setUserInteractionEnabled: YES];
 
-	if(![[self hasGestureRecognizer] isEqual: @YES])
+	if(![self hasGestureRecognizer])
 	{
+		if(showAlarmOnTap)
+		{
+			[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(updateAlarms) name: @"MTAlarmManagerNextAlarmChanged" object: nil];
+		
+			UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget: self action: @selector(showHideAlarm)];
+			[self addGestureRecognizer: tapGestureRecognizer];
+		}
 		if(enableDoubleTap)
 		{
 			UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget: self action: @selector(openDoubleTapApp)];
@@ -53,8 +64,21 @@ static double width;
 			UILongPressGestureRecognizer *holdGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget: self action: @selector(openHoldApp)];
 			[self addGestureRecognizer: holdGestureRecognizer];
 		}
-		[self setHasGestureRecognizer: @YES];
+		[self setHasGestureRecognizer: YES];
 	}
+}
+
+%new
+- (void)showHideAlarm
+{
+	isShowingAlarm = !isShowingAlarm;
+	[self updateAlarms];
+}
+
+%new
+- (void)updateAlarms
+{
+	[self setText: @":"];
 }
 
 %new
@@ -69,24 +93,24 @@ static double width;
 	[[UIApplication sharedApplication] launchApplicationWithIdentifier: holdIdentifier suspended: NO];
 }
 
-
 %new
-- (id)hasGestureRecognizer
+- (BOOL)hasGestureRecognizer
 {
-	return objc_getAssociatedObject(self, @selector(hasGestureRecognizer));
+	return [objc_getAssociatedObject(self, @selector(hasGestureRecognizer)) isEqual: @YES] ? YES : NO;
 }
 
 %new
-- (void)setHasGestureRecognizer: (id)arg
+- (void)setHasGestureRecognizer: (BOOL)arg
 {
-	objc_setAssociatedObject(self, @selector(hasGestureRecognizer), arg, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+	objc_setAssociatedObject(self, @selector(hasGestureRecognizer), @(arg), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (void)setTextColor: (UIColor*)color
 {
 	if(customTextColorEnabled && ([[self text] containsString: @"\n"] || [[self text] containsString: @":"] || [[self text] containsString: @"."]))
 		%orig(customTextColor);
-	else %orig;
+	else
+		%orig;
 }
 
 - (void)setFont: (UIFont*)arg1
@@ -95,32 +119,65 @@ static double width;
 		%orig;
 }
 
+- (void)setBounds: (CGRect)bounds
+{
+	if(showDateInSameLine && customWidth && ([[self text] containsString: @"\n"] || [[self text] containsString: @":"] || [[self text] containsString: @"."]))	
+	{
+		bounds.size.width = width;
+		%orig(bounds);
+	}
+	else
+		%orig;
+}
+
+- (void)setFrame: (CGRect)frame
+{
+	if(showDateInSameLine && customWidth && ([[self text] containsString: @"\n"] || [[self text] containsString: @":"] || [[self text] containsString: @"."]))
+	{
+		frame.size.width = width;
+		%orig(frame);
+	}
+	else
+		%orig;
+}
+
 - (void)setText: (NSString*)text
 {
 	if([text containsString: @":"] || [text containsString: @"."])
 	{
-		@autoreleasepool
+		if(isShowingAlarm)
+		{
+			MTAlarm *nextAlarm = [MSHookIvar<MTAlarmManager*>([%c(SBScheduledAlarmObserver) sharedInstance], "_alarmManager") nextAlarmSync];
+			if(nextAlarm)
+			{
+				NSDate *alarmDate = [nextAlarm nextFireDate];
+				[finalString setAttributedString: [[NSAttributedString alloc] initWithString: [NSString stringWithFormat: @"%@ \u23F0", [formatter1 stringFromDate: alarmDate]] attributes: @{ NSFontAttributeName: font1 }]];
+				[finalString appendAttributedString: [[NSAttributedString alloc] initWithString: [formatter2 stringFromDate: alarmDate] attributes: @{ NSFontAttributeName: font2 }]];
+			}
+			else
+			{
+				[finalString setAttributedString: [[NSAttributedString alloc] initWithString: @"No\n" attributes: @{ NSFontAttributeName: font1 }]];
+				[finalString appendAttributedString: [[NSAttributedString alloc] initWithString: @"Alarms set" attributes: @{ NSFontAttributeName: font2 }]];
+			}
+		}
+		else
 		{
 			NSDate *nowDate = [NSDate date];
 
 			[finalString setAttributedString: [[NSAttributedString alloc] initWithString: [formatter1 stringFromDate: nowDate] attributes: @{ NSFontAttributeName: font1 }]];
 			[finalString appendAttributedString: [[NSAttributedString alloc] initWithString: [formatter2 stringFromDate: nowDate] attributes: @{ NSFontAttributeName: font2 }]];
-
-			if(showDateInSameLine) [self setNumberOfLines: 1];
-			else [self setNumberOfLines: 2];
-			[self setTextAlignment: alignment];
-			[self setAdjustsFontSizeToFitWidth: YES];
-			[self setAttributedText: finalString];
-
-			if([self frame].size.width != width)
-			{
-				CGRect frame = [self frame];
-				frame.size.width = width;
-				[self setFrame: frame];
-			}
 		}
+
+		if(showDateInSameLine)
+			[self setNumberOfLines: 1];
+		else
+			[self setNumberOfLines: 2];
+		[self setTextAlignment: alignment];
+		[self setAdjustsFontSizeToFitWidth: YES];
+		[self setAttributedText: finalString];
 	}
-	else %orig;
+	else
+		%orig;
 }
 
 %end
@@ -168,11 +225,13 @@ static double width;
 			@"locale": @"en_US",
 			@"alignment": @1,
 			@"customTextColorEnabled": @NO,
+			@"showAlarmOnTap": @NO,
 			@"enableDoubleTap": @NO,
 			@"enableHold": @NO,
 			@"hideLocationIndicator": @NO,
 			@"disableBreadcrumbs": @NO,
 			@"showDateInSameLine": @NO,
+			@"customWidth": @NO,
 			@"width": @100
     	}];
 
@@ -188,11 +247,13 @@ static double width;
 			locale = [pref objectForKey: @"locale"];
 			alignment = [pref integerForKey: @"alignment"];
 			customTextColorEnabled = [pref boolForKey: @"customTextColorEnabled"];
+			showAlarmOnTap = [pref boolForKey: @"showAlarmOnTap"];
 			enableDoubleTap = [pref boolForKey: @"enableDoubleTap"];
 			enableHold = [pref boolForKey: @"enableHold"];
 			hideLocationIndicator = [pref boolForKey: @"hideLocationIndicator"];
 			disableBreadcrumbs = [pref boolForKey: @"disableBreadcrumbs"];
 			showDateInSameLine = [pref boolForKey: @"showDateInSameLine"];
+			customWidth = [pref boolForKey: @"customWidth"];
 			width = [pref doubleForKey: @"width"];
 
 			if(customTextColorEnabled)
@@ -218,9 +279,7 @@ static double width;
 			formatter1 = [[NSDateFormatter alloc] init];
 			[formatter1 setLocale: [[NSLocale alloc] initWithLocaleIdentifier: locale]];
 			[formatter1 setTimeStyle: NSDateFormatterNoStyle];
-
-			if(showDateInSameLine) [formatter1 setDateFormat: [NSString stringWithFormat:@"%@ ", format1]];
-			else [formatter1 setDateFormat: [NSString stringWithFormat:@"%@\n", format1]];
+			[formatter1 setDateFormat: format1];
 
 			if(bold1) font1 = [UIFont boldSystemFontOfSize: fontSize1];
 			else font1 = [UIFont systemFontOfSize: fontSize1];
@@ -229,6 +288,11 @@ static double width;
 			[formatter2 setLocale: [[NSLocale alloc] initWithLocaleIdentifier: locale]];
 			[formatter2 setTimeStyle: NSDateFormatterNoStyle];
 			[formatter2 setDateFormat: format2];
+
+			if(showDateInSameLine)
+				[formatter2 setDateFormat: [NSString stringWithFormat: @" %@", format2]];
+			else
+				[formatter2 setDateFormat: [NSString stringWithFormat: @"\n%@", format2]];
 
 			if(bold2) font2 = [UIFont boldSystemFontOfSize: fontSize2];
 			else font2 = [UIFont systemFontOfSize: fontSize2];

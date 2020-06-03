@@ -17,6 +17,18 @@
 			<string>PSGroupCell</string>
         </dict>
 		<dict>
+			<key>cellClass</key>
+			<string>HBLinkTableCell</string>
+			<key>label</key>
+			<string>Formatting Instructions</string>
+			<key>url</key>
+   	 		<string>https://nsdateformatter.com/</string>
+        </dict>
+		<dict>
+        	<key>cell</key>
+			<string>PSGroupCell</string>
+        </dict>
+		<dict>
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
@@ -208,6 +220,20 @@
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>ACTIONS</string>
+			<key>footerText</key>
+			<string>'WHEN TAP TO SHOW NEXT ALARM' OPTION IS ENABLED YOU CAN TAP THE TIME TO SHOW NEXT ALARM DATE AND TAP AGAIN TO SHOW THE CURRENT TIME AGAIN.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.johnzaro.dateundertime13prefs</string>
+			<key>key</key>
+			<string>showAlarmOnTap</string>
+			<key>label</key>
+			<string>Tap To Show Next Alarm</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -273,7 +299,7 @@
 			<key>label</key>
 			<string>BREADCRUMBS</string>
 			<key>footerText</key>
-			<string>By Enabling This Setting, You Will Not Need My Other Tweak Called 'DisableBreadcrumbs13'. It Has The Same Functionality.</string>
+			<string>BY ENABLING THIS SETTING, YOU WILL NOT NEED MY OTHER TWEAK CALLED 'DISABLEBREADCRUMBS13'. IT HAS THE SAME FUNCTIONALITY.</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -304,6 +330,18 @@
 			<string>showDateInSameLine</string>
 			<key>label</key>
 			<string>Show Date In The Same Line</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.johnzaro.dateundertime13prefs</string>
+			<key>key</key>
+			<string>customWidth</string>
+			<key>label</key>
+			<string>Custom Width</string>
 		</dict>
 		<dict>
 			<key>cell</key>
