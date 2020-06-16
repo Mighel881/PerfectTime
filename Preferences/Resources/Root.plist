@@ -385,7 +385,7 @@
 			<key>icon</key>
 			<string>github.png</string>
 			<key>url</key>
-   	 		<string>https://github.com/johnzaro/DateUnderTime13</string>
+   	 		<string>https://github.com/johnzaro/PerfectTime</string>
 		</dict>
  		<dict>
         	<key>cell</key>
@@ -439,6 +439,6 @@
         </dict>
 	</array>
 	<key>title</key>
-	<string>DateUnderTime13</string>
+	<string>PerfectTime</string>
 </dict>
 </plist>

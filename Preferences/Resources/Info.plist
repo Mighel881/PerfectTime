@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>DateUnderTime13Prefs</string>
+	<string>PerfectTimePrefs</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.johnzaro.dateundertime13prefs</string>
 	<key>CFBundleInfoDictionaryVersion</key>

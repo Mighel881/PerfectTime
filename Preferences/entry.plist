@@ -5,7 +5,7 @@
 	<key>entry</key>
 	<dict>
 		<key>bundle</key>
-		<string>DateUnderTime13Prefs</string>
+		<string>PerfectTimePrefs</string>
 		<key>cell</key>
 		<string>PSLinkCell</string>
 		<key>detail</key>
@@ -15,7 +15,7 @@
 		<key>isController</key>
 		<true/>
 		<key>label</key>
-		<string>DateUnderTime13</string>
+		<string>PerfectTime</string>
 	</dict>
 </dict>
 </plist>
